@@ -85,12 +85,8 @@ function print_submenu_page() {
 function print_media_new_panel( $is_in_upload_ui ) {
 ?>
 	<div id="emwi-media-new-panel" <?php if ( $is_in_upload_ui  ) : ?>style="display: none"<?php endif; ?>>
-	  <div class="url-row">
-		<label><?php echo __('Add a media from URL'); ?></label>
-		<span id="emwi-url-input-wrapper">
-		  <input id="emwi-url" name="url" type="url" required placeholder="<?php echo __('Image URL');?>" value="<?php echo esc_url( $_GET['url'] ); ?>">
-		</span>
-	  </div>
+      <label id="emwi-urls-label"><?php echo __('Add medias from URLs'); ?></label>
+      <textarea id="emwi-urls" rows="<?php echo $is_in_upload_ui ? 3 : 10 ?>" name="urls" required placeholder="<?php echo __("Please fill in the media URLs.\nMultiple URLs are supported with each URL specified in one line.");?>" value="<?php echo esc_url( $_GET['urls'] ); ?>"></textarea>
 	  <div id="emwi-hidden" <?php if ( $is_in_upload_ui || empty( $_GET['error'] ) ) : ?>style="display: none"<?php endif; ?>>
 		<div>
 		  <span id="emwi-error"><?php echo esc_html( $_GET['error'] ); ?></span>
@@ -138,7 +134,7 @@ function admin_post_add_external_media_without_import() {
 	$info = add_external_media_without_import();
 	$redirect_url = 'upload.php';
 	if ( ! isset( $info['id'] ) ) {
-		$redirect_url = $redirect_url .  '?page=add-external-media-without-import&url=' . urlencode( $info['url'] );
+		$redirect_url = $redirect_url .  '?page=add-external-media-without-import&urls=' . urlencode( $info['urls'] );
 		$redirect_url = $redirect_url . '&error=' . urlencode( $info['error'] );
 		$redirect_url = $redirect_url . '&width=' . urlencode( $info['width'] );
 		$redirect_url = $redirect_url . '&height=' . urlencode( $info['height'] );
@@ -149,6 +145,9 @@ function admin_post_add_external_media_without_import() {
 }
 
 function sanitize_and_validate_input() {
+    $urls = $_POST['urls'];
+    return;
+
 	// Don't call sanitize_text_field on url because it removes '%20'.
 	// Always use esc_url/esc_url_raw when sanitizing URLs. See:
 	// https://codex.wordpress.org/Function_Reference/esc_url
@@ -186,10 +185,12 @@ function add_external_media_without_import() {
 		return $input;
 	}
 
-	$url = $input['url'];
+	$urls = $input['urls'];
 	$width = $input['width'];
 	$height = $input['height'];
 	$mime_type = $input['mime-type'];
+
+    return $input;
 
 	if ( empty( $width ) || empty( $height ) || empty( $mime_type ) ) {
 		$image_size = @getimagesize( $url );
