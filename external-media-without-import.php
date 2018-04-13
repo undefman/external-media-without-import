@@ -59,16 +59,18 @@ function post_upload_ui() {
 		<?php echo __('or'); ?>
 	  </div>
 	  <div class="row2">
+<?php /*
 		<?php if ( 'grid' === $media_library_mode ) : // FIXME: seems that media_library_mode being empty also means grid mode ?>
 		  <button id="emwi-show" class="button button-large">
 			<?php echo __('Add External Media without Import'); ?>
 		  </button>
 		  <?php print_media_new_panel( true ); ?>
 		<?php else : ?>
+ */ ?>
 		  <a class="button button-large" href="<?php echo esc_url( admin_url( '/upload.php?page=add-external-media-without-import', __FILE__ ) ); ?>">
 			<?php echo __('Add External Media without Import'); ?>
 		  </a>
-		<?php endif; ?>
+		<?php // endif; ?>
 	  </div>
 	</div>
 <?php
