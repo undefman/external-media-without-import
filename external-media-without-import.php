@@ -147,14 +147,16 @@ function admin_post_add_external_media_without_import() {
 }
 
 function sanitize_and_validate_input() {
-    $urls = $_POST['urls'];
-    return;
+	$urls = explode( "\n", $_POST['urls'] );
+	foreach ( $urls as $i => $url ) {
+		// Don't call sanitize_text_field on url because it removes '%20'.
+		// Always use esc_url/esc_url_raw when sanitizing URLs. See:
+		// https://codex.wordpress.org/Function_Reference/esc_url
+		$urls[$i] = esc_url_raw( trim( $url ) );
+	}
 
-	// Don't call sanitize_text_field on url because it removes '%20'.
-	// Always use esc_url/esc_url_raw when sanitizing URLs. See:
-	// https://codex.wordpress.org/Function_Reference/esc_url
 	$input = array(
-		'url' => esc_url_raw( $_POST['url'] ),
+		'urls' =>  $urls,
 		'width' => sanitize_text_field( $_POST['width'] ),
 		'height' => sanitize_text_field( $_POST['height'] ),
 		'mime-type' => sanitize_mime_type( $_POST['mime-type'] )
@@ -182,6 +184,8 @@ function sanitize_and_validate_input() {
 
 function add_external_media_without_import() {
 	$input = sanitize_and_validate_input();
+
+	return $input;  // temp code
 
 	if ( isset( $input['error'] ) ) {
 		return $input;
